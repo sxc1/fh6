@@ -12,6 +12,7 @@ import {
 } from '../lib/cars'
 import { getClassColor } from '../lib/classColors'
 import { useStore } from '../store'
+import { CountryFlag } from './CountryFlag'
 import { MultiSelect } from './MultiSelect'
 import { RangeSlider } from './RangeSlider'
 
@@ -200,6 +201,12 @@ export function FilterPanel() {
             onToggle={toggleCountry}
             placeholder="All countries"
             searchPlaceholder="Search countries..."
+            renderOption={(c) => (
+              <span className="inline-flex min-w-0 items-center gap-1.5">
+                <CountryFlag country={c} />
+                <span className="truncate">{c}</span>
+              </span>
+            )}
           />
         </Section>
 

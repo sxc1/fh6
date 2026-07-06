@@ -4,6 +4,7 @@ import { carImageUrl } from '../lib/carImages'
 import type { Car, ViewMode } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
 import { ClassBadge } from './ClassBadge'
+import { CountryFlag } from './CountryFlag'
 import { PriceDisplay } from './PriceDisplay'
 
 export function WishlistRow({
@@ -132,13 +133,11 @@ export function WishlistRow({
           <div className="text-sm font-semibold leading-tight">{car.name}</div>
         </div>
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
               {car.type}
             </span>
-            <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
-              {car.country}
-            </span>
+            <CountryFlag country={car.country} />
           </div>
           <PriceDisplay value={price} />
         </div>

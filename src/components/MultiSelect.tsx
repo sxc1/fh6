@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 
 interface MultiSelectProps {
@@ -7,6 +15,8 @@ interface MultiSelectProps {
   onToggle: (value: string) => void
   placeholder?: string
   searchPlaceholder?: string
+  /** Customize how each option/chip label renders. Defaults to the plain value. */
+  renderOption?: (value: string) => ReactNode
 }
 
 interface MenuPosition {
@@ -31,6 +41,7 @@ export function MultiSelect({
   onToggle,
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
+  renderOption = (value) => value,
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -159,7 +170,7 @@ export function MultiSelect({
                 }}
                 className="inline-flex cursor-pointer items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground"
               >
-                {value}
+                {renderOption(value)}
                 <span aria-hidden>&times;</span>
               </button>
             ))
@@ -224,7 +235,7 @@ export function MultiSelect({
                           >
                             {isSelected ? '✓' : ''}
                           </span>
-                          <span className="truncate">{value}</span>
+                          <span className="truncate">{renderOption(value)}</span>
                         </button>
                       </li>
                     )

@@ -2,6 +2,7 @@ import { effectivePrice, useStore } from '../store'
 import type { Car, ViewMode } from '../lib/types'
 import { carImageUrl } from '../lib/carImages'
 import { ClassBadge } from './ClassBadge'
+import { CountryFlag } from './CountryFlag'
 import { PriceDisplay } from './PriceDisplay'
 
 function useCarBindings(car: Car) {
@@ -60,13 +61,11 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
             </div>
             <div className="text-sm font-semibold leading-tight">{car.name}</div>
           </div>
-          <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
               {car.type}
             </span>
-            <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
-              {car.country}
-            </span>
+            <CountryFlag country={car.country} />
           </div>
           <div className="mt-auto flex items-center justify-between gap-2 pt-1">
             <PriceDisplay value={price} />
@@ -86,8 +85,11 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
       <ClassBadge carClass={car.carClass} rating={car.classRating} />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">{car.name}</div>
-        <div className="truncate text-xs text-muted-foreground">
-          {car.make} &middot; {car.type} &middot; {car.country}
+        <div className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+          <span className="truncate">
+            {car.make} &middot; {car.type}
+          </span>
+          <CountryFlag country={car.country} />
         </div>
       </div>
       <span className="hidden w-12 shrink-0 text-right text-sm text-muted-foreground sm:block">
