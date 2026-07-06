@@ -27,7 +27,7 @@ function Section({
   return (
     <div className="border-b border-border py-3">
       <div className="flex w-full items-center justify-between text-left text-sm font-semibold">
-        <span className="flex items-center gap-2">
+        <span className="flex items-center gap-2 py-0.5">
           {title}
           {count ? (
             <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">

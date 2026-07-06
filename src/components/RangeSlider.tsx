@@ -161,7 +161,7 @@ export function RangeSlider({
     openEndedMax && hi >= max ? (v: number) => `${formatValue(v)}+` : formatValue
 
   return (
-    <div>
+    <div className="pt-2">
       <Slider.Root
         className="relative flex h-5 w-full cursor-pointer touch-none select-none items-center"
         min={isLog ? 0 : min}
@@ -194,7 +194,7 @@ export function RangeSlider({
           className="block h-4 w-4 rounded-full bg-primary shadow outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </Slider.Root>
-      <div className="mt-2 flex items-center justify-between gap-2">
+      <div className="mt-4 flex items-center justify-between gap-2">
         <EditableBound
           value={lo}
           lo={min}
