@@ -9,7 +9,8 @@ export interface Car {
   country: string
   collection: string[]
   addOns: string
-  basePrice: number
+  /** CSV base price, or null when the dataset has no price for this car. */
+  basePrice: number | null
 }
 
 export type ViewMode = 'list' | 'tile'

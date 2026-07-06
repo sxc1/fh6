@@ -26,7 +26,7 @@ export function CarBrowser() {
   const prices = useStore((s) => s.prices)
 
   const cars = useMemo(() => {
-    const priceOf = (id: string) => effectivePrice(id, prices)
+    const priceOf = (id: string) => effectivePrice(id, prices) ?? 0
     return CARS.filter(
       (c) => matchesFilters(c, filters, priceOf) && matchesSearch(c, search),
     ).sort((a, b) => compareCars(a, b, sortField, sortDir, priceOf))

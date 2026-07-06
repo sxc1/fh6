@@ -129,8 +129,11 @@ export const useStore = create<WishlistState>()(
   ),
 )
 
-/** Effective price for a car: user override if present, otherwise CSV base price. */
-export function effectivePrice(id: string, prices: Record<string, number>): number {
+/**
+ * Effective price for a car: user override if present, otherwise CSV base price.
+ * Returns null when the price is unknown (no override and no dataset price).
+ */
+export function effectivePrice(id: string, prices: Record<string, number>): number | null {
   if (id in prices) return prices[id]
-  return CARS_BY_ID.get(id)?.basePrice ?? 0
+  return CARS_BY_ID.get(id)?.basePrice ?? null
 }

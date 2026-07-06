@@ -1,10 +1,80 @@
+import { useState } from 'react'
+import {
+  RangeSlider as KendoRangeSlider,
+  type RangeSliderChangeEvent,
+} from '@progress/kendo-react-inputs'
+
 interface RangeSliderProps {
   min: number
   max: number
   value: [number, number]
   step?: number
   onChange: (value: [number, number]) => void
+  /** Formats a bound for display when the input isn't being edited (e.g. "20,000,000 CR"). */
   formatValue?: (value: number) => string
+}
+
+/**
+ * Editable numeric bound. Shows the formatted value at rest; on focus it swaps to the
+ * raw number for easy typing, and commits (clamped + step-snapped) on blur/Enter.
+ */
+function EditableBound({
+  value,
+  lo,
+  hi,
+  step,
+  onCommit,
+  formatValue,
+  align,
+  ariaLabel,
+}: {
+  value: number
+  lo: number
+  hi: number
+  step: number
+  onCommit: (n: number) => void
+  formatValue: (v: number) => string
+  align: 'left' | 'right'
+  ariaLabel: string
+}) {
+  const [text, setText] = useState<string | null>(null)
+  const editing = text !== null
+
+  const commit = () => {
+    if (text === null) return
+    const digits = text.replace(/[^0-9]/g, '')
+    let n = digits === '' ? value : Number.parseInt(digits, 10)
+    if (!Number.isFinite(n)) n = value
+    n = Math.round(n / step) * step
+    n = Math.min(hi, Math.max(lo, n))
+    onCommit(n)
+    setText(null)
+  }
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      aria-label={ariaLabel}
+      value={editing ? text : formatValue(value)}
+      onFocus={(e) => {
+        setText(String(value))
+        requestAnimationFrame(() => e.target.select())
+      }}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') e.currentTarget.blur()
+        else if (e.key === 'Escape') {
+          setText(null)
+          e.currentTarget.blur()
+        }
+      }}
+      className={`w-[46%] rounded-md border border-input bg-card px-2 py-1 text-xs tabular-nums outline-none focus:ring-2 focus:ring-ring ${
+        align === 'right' ? 'text-right' : 'text-left'
+      }`}
+    />
+  )
 }
 
 export function RangeSlider({
@@ -16,42 +86,45 @@ export function RangeSlider({
   formatValue = (v) => String(v),
 }: RangeSliderProps) {
   const [lo, hi] = value
-  const span = Math.max(1, max - min)
-  const loPct = ((lo - min) / span) * 100
-  const hiPct = ((hi - min) / span) * 100
 
   return (
     <div>
-      <div className="relative h-5">
-        <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-border" />
-        <div
-          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-primary"
-          style={{ left: `${loPct}%`, right: `${100 - hiPct}%` }}
-        />
-        <input
-          type="range"
-          className="range-thumb"
-          min={min}
-          max={max}
-          step={step}
+      <KendoRangeSlider
+        className="fh6-range"
+        min={min}
+        max={max}
+        step={step}
+        value={{ start: lo, end: hi }}
+        onChange={(e: RangeSliderChangeEvent) => {
+          // KendoReact's `step` only governs keyboard arrows; dragging emits
+          // continuous floats, so snap to `step` (and clamp) to keep values integral.
+          const snap = (v: number) => Math.min(max, Math.max(min, Math.round(v / step) * step))
+          const s = snap(e.value.start)
+          const en = snap(e.value.end)
+          onChange([Math.min(s, en), Math.max(s, en)])
+        }}
+      />
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <EditableBound
           value={lo}
-          onChange={(e) => onChange([Math.min(Number(e.target.value), hi), hi])}
-          aria-label="Minimum"
-        />
-        <input
-          type="range"
-          className="range-thumb"
-          min={min}
-          max={max}
+          lo={min}
+          hi={hi}
           step={step}
-          value={hi}
-          onChange={(e) => onChange([lo, Math.max(Number(e.target.value), lo)])}
-          aria-label="Maximum"
+          onCommit={(n) => onChange([n, hi])}
+          formatValue={formatValue}
+          align="left"
+          ariaLabel="Minimum"
         />
-      </div>
-      <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-        <span>{formatValue(lo)}</span>
-        <span>{formatValue(hi)}</span>
+        <EditableBound
+          value={hi}
+          lo={lo}
+          hi={max}
+          step={step}
+          onCommit={(n) => onChange([lo, n])}
+          formatValue={formatValue}
+          align="right"
+          ariaLabel="Maximum"
+        />
       </div>
     </div>
   )

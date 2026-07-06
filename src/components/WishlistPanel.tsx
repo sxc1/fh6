@@ -75,7 +75,7 @@ export function WishlistPanel() {
   )
 
   const visible = useMemo(() => {
-    const priceOf = (id: string) => effectivePrice(id, prices)
+    const priceOf = (id: string) => effectivePrice(id, prices) ?? 0
     return cars.filter((car) => {
       if (hideObtained && obtained.includes(car.id)) return false
       if (applyFilters && !matchesFilters(car, filters, priceOf)) return false
@@ -84,7 +84,7 @@ export function WishlistPanel() {
   }, [cars, hideObtained, obtained, applyFilters, filters, prices])
 
   const total = useMemo(
-    () => visible.reduce((sum, car) => sum + effectivePrice(car.id, prices), 0),
+    () => visible.reduce((sum, car) => sum + (effectivePrice(car.id, prices) ?? 0), 0),
     [visible, prices],
   )
 

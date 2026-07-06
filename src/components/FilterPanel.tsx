@@ -134,14 +134,14 @@ export function FilterPanel() {
           />
         </Section>
 
-        <Section title="Cost range">
+        <Section title="Price range">
           <RangeSlider
             min={COST_FLOOR}
             max={COST_CEIL}
             step={COST_STEP}
             value={filters.costRange}
             onChange={setCostRange}
-            formatValue={(v) => `${v.toLocaleString()} CR`}
+            formatValue={(v) => v.toLocaleString()}
           />
         </Section>
       </div>

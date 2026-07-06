@@ -47,6 +47,11 @@ function parseCars(): Car[] {
       .map((c) => c.trim())
       .filter(Boolean)
 
+    // Empty/non-numeric price → null ("unknown"), so display can distinguish it
+    // from a genuine 0 CR. Downstream math coalesces null to 0.
+    const parsedPrice = Number.parseInt(row.Price, 10)
+    const basePrice = Number.isFinite(parsedPrice) ? parsedPrice : null
+
     cars.push({
       id,
       make,
@@ -58,7 +63,7 @@ function parseCars(): Car[] {
       country: (row.Country ?? '').trim(),
       collection,
       addOns: (row['Add-Ons'] ?? '').trim(),
-      basePrice: Number.parseInt(row.Price, 10) || 0,
+      basePrice,
     })
   }
 

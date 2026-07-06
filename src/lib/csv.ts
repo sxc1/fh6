@@ -12,15 +12,19 @@ const HEADERS = [
   'Collection',
 ] as const
 
-export function exportWishlistCsv(order: string[], priceOf: (id: string) => number): void {
+export function exportWishlistCsv(
+  order: string[],
+  priceOf: (id: string) => number | null,
+): void {
   const data = order.flatMap((id) => {
     const car = CARS_BY_ID.get(id)
     if (!car) return []
+    const price = priceOf(id)
     return [
       [
         car.make,
         car.name,
-        String(priceOf(id)),
+        price == null ? '' : String(price),
         car.type,
         car.carClass,
         String(car.classRating),
