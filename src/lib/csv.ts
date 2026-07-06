@@ -2,6 +2,7 @@ import Papa from 'papaparse'
 import { CARS_BY_ID, makeCarId } from './cars'
 
 const HEADERS = [
+  'Obtained',
   'Make',
   'Car Name',
   'Price',
@@ -15,6 +16,7 @@ const HEADERS = [
 export function exportWishlistCsv(
   order: string[],
   priceOf: (id: string) => number | null,
+  isObtained: (id: string) => boolean,
 ): void {
   const data = order.flatMap((id) => {
     const car = CARS_BY_ID.get(id)
@@ -22,6 +24,7 @@ export function exportWishlistCsv(
     const price = priceOf(id)
     return [
       [
+        isObtained(id) ? '1' : '0',
         car.make,
         car.name,
         price == null ? '' : String(price),

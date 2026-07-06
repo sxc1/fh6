@@ -101,7 +101,12 @@ export function WishlistPanel() {
     setWishlistOrder(arrayMove(wishlist, oldIndex, newIndex))
   }
 
-  const onExport = () => exportWishlistCsv(wishlist, (id) => effectivePrice(id, prices))
+  const onExport = () =>
+    exportWishlistCsv(
+      wishlist,
+      (id) => effectivePrice(id, prices),
+      (id) => obtained.includes(id),
+    )
 
   const onImportFile = async (file: File) => {
     const text = await file.text()
