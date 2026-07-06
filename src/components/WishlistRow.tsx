@@ -24,10 +24,9 @@ export function WishlistRow({ car, index }: { car: Car; index: number }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex cursor-grab touch-none items-center gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing ${
-        obtained ? 'opacity-60' : ''
-      }`}
-      title="Drag to reorder"
+      onClick={() => toggleObtained(car.id)}
+      className="relative flex cursor-grab touch-none items-center gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing"
+      title="Click to toggle obtained; drag to reorder"
       {...attributes}
       {...listeners}
     >
@@ -35,20 +34,10 @@ export function WishlistRow({ car, index }: { car: Car; index: number }) {
         {index + 1}
       </span>
 
-      <input
-        type="checkbox"
-        checked={obtained}
-        onChange={() => toggleObtained(car.id)}
-        className="h-4 w-4 shrink-0 accent-primary"
-        title="Mark as obtained"
-      />
-
       <ClassBadge carClass={car.carClass} />
 
       <div className="min-w-0 flex-1">
-        <div className={`truncate text-sm font-semibold ${obtained ? 'line-through' : ''}`}>
-          {car.name}
-        </div>
+        <div className="truncate text-sm font-semibold">{car.name}</div>
         <div className="truncate text-xs text-muted-foreground">
           {car.make} &middot; {car.type}
         </div>
@@ -58,12 +47,21 @@ export function WishlistRow({ car, index }: { car: Car; index: number }) {
 
       <button
         type="button"
-        onClick={() => removeFromWishlist(car.id)}
+        onClick={(e) => {
+          e.stopPropagation()
+          removeFromWishlist(car.id)
+        }}
         className="shrink-0 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
         title="Remove from wishlist"
       >
         &times;
       </button>
+
+      {obtained ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg bg-background/70">
+          <span className="text-sm font-bold uppercase tracking-widest text-primary">Obtained</span>
+        </div>
+      ) : null}
     </div>
   )
 }
