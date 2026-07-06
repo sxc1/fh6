@@ -90,6 +90,35 @@ export const COUNTRIES: string[] = [...new Set(CARS.map((c) => c.country).filter
 )
 
 /**
+ * Manufacturer → set of countries its cars originate from. Currently every make maps to
+ * exactly one country, but this is modeled as a set so a future dataset where a make
+ * spans multiple countries still works. Used to filter the manufacturer picker by the
+ * selected countries.
+ */
+const MAKE_COUNTRIES: Map<string, Set<string>> = (() => {
+  const m = new Map<string, Set<string>>()
+  for (const car of CARS) {
+    if (!car.country) continue
+    const set = m.get(car.make) ?? new Set<string>()
+    set.add(car.country)
+    m.set(car.make, set)
+  }
+  return m
+})()
+
+/** Whether a manufacturer has cars from at least one of the given countries. */
+function makeInCountries(make: string, countries: string[]): boolean {
+  const set = MAKE_COUNTRIES.get(make)
+  if (!set) return false
+  return countries.some((c) => set.has(c))
+}
+
+/** Manufacturers to show given the selected countries (all makes when none selected). */
+export function makesForCountries(countries: string[]): string[] {
+  return countries.length ? MAKES.filter((m) => makeInCountries(m, countries)) : MAKES
+}
+
+/**
  * Class filter options, hardcoded (fastest→slowest) so the UI always offers the
  * full set regardless of what's currently present in the CSV.
  */

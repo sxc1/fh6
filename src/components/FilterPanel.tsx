@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import {
   CAR_TYPES,
   CLASSES,
@@ -6,7 +6,7 @@ import {
   COST_FLOOR,
   COST_STEP,
   COUNTRIES,
-  MAKES,
+  makesForCountries,
   YEAR_MAX,
   YEAR_MIN,
 } from '../lib/cars'
@@ -70,6 +70,18 @@ export function FilterPanel() {
 
   const yearFiltered = filters.yearRange[0] !== YEAR_MIN || filters.yearRange[1] !== YEAR_MAX
   const costFiltered = filters.costRange[0] !== COST_FLOOR || filters.costRange[1] !== COST_CEIL
+
+  // Country narrows the manufacturer picker. Manufacturers already selected but no longer
+  // in a selected country are kept and pinned to the top so the selection stays visible
+  // and removable (they also remain as chips in the trigger).
+  const manufacturerOptions = useMemo(() => {
+    const inCountry = makesForCountries(filters.countries)
+    const inCountrySet = new Set(inCountry)
+    const pinned = filters.manufacturers
+      .filter((m) => !inCountrySet.has(m))
+      .sort((a, b) => a.localeCompare(b))
+    return pinned.length ? [...pinned, ...inCountry] : inCountry
+  }, [filters.countries, filters.manufacturers])
 
   const activeCount =
     filters.classes.length +
@@ -178,20 +190,6 @@ export function FilterPanel() {
         </Section>
 
         <Section
-          title="Manufacturer"
-          count={filters.manufacturers.length}
-          onClear={filters.manufacturers.length ? clearManufacturers : undefined}
-        >
-          <MultiSelect
-            options={MAKES}
-            selected={filters.manufacturers}
-            onToggle={toggleManufacturer}
-            placeholder="All manufacturers"
-            searchPlaceholder="Search manufacturers..."
-          />
-        </Section>
-
-        <Section
           title="Country"
           count={filters.countries.length}
           onClear={filters.countries.length ? clearCountries : undefined}
@@ -202,6 +200,20 @@ export function FilterPanel() {
             onToggle={toggleCountry}
             placeholder="All countries"
             searchPlaceholder="Search countries..."
+          />
+        </Section>
+
+        <Section
+          title="Manufacturer"
+          count={filters.manufacturers.length}
+          onClear={filters.manufacturers.length ? clearManufacturers : undefined}
+        >
+          <MultiSelect
+            options={manufacturerOptions}
+            selected={filters.manufacturers}
+            onToggle={toggleManufacturer}
+            placeholder="All manufacturers"
+            searchPlaceholder="Search manufacturers..."
           />
         </Section>
 
