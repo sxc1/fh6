@@ -58,3 +58,33 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+      - name: Debug GitHub Pages API state
+        if: failure()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            core.info(`Inspecting Pages state for ${owner}/${repo}`);
+
+            try {
+              const site = await github.request("GET /repos/{owner}/{repo}/pages", {
+                owner,
+                repo
+              });
+              core.info("Pages site config:");
+              core.info(JSON.stringify(site.data, null, 2));
+            } catch (error) {
+              core.warning(`Unable to read Pages site config: ${error.message}`);
+            }
+
+            try {
+              const deployments = await github.request("GET /repos/{owner}/{repo}/pages/deployments", {
+                owner,
+                repo
+              });
+              core.info("Recent Pages deployments:");
+              core.info(JSON.stringify(deployments.data?.slice?.(0, 5) ?? deployments.data, null, 2));
+            } catch (error) {
+              core.warning(`Unable to read Pages deployments: ${error.message}`);
+            }
