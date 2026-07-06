@@ -131,6 +131,7 @@ export function FilterPanel() {
             max={YEAR_MAX}
             value={filters.yearRange}
             onChange={setYearRange}
+            openEndedMax
           />
         </Section>
 
@@ -142,6 +143,7 @@ export function FilterPanel() {
             value={filters.costRange}
             onChange={setCostRange}
             formatValue={(v) => v.toLocaleString()}
+            openEndedMax
           />
         </Section>
       </div>

@@ -1,3 +1,4 @@
+import { COST_CEIL, YEAR_MAX } from './cars'
 import { classRank, type Car, type Filters, type SortDir, type SortField } from './types'
 
 export function matchesFilters(
@@ -8,9 +9,13 @@ export function matchesFilters(
   if (filters.classes.length && !filters.classes.includes(car.carClass)) return false
   if (filters.categories.length && !filters.categories.includes(car.type)) return false
   if (filters.manufacturers.length && !filters.manufacturers.includes(car.make)) return false
-  if (car.year < filters.yearRange[0] || car.year > filters.yearRange[1]) return false
+  // The top of each slider is an open-ended bound: at the ceiling we drop the upper
+  // limit so out-of-domain outliers (the 2554 car, 5M+ prices) still show through.
+  const yearMax = filters.yearRange[1] >= YEAR_MAX ? Infinity : filters.yearRange[1]
+  if (car.year < filters.yearRange[0] || car.year > yearMax) return false
   const price = priceOf(car.id)
-  if (price < filters.costRange[0] || price > filters.costRange[1]) return false
+  const costMax = filters.costRange[1] >= COST_CEIL ? Infinity : filters.costRange[1]
+  if (price < filters.costRange[0] || price > costMax) return false
   return true
 }
 

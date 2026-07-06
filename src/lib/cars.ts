@@ -91,12 +91,20 @@ export const CAR_TYPES: string[] = [...new Set(CARS.map((c) => c.type))].sort((a
 export const CLASSES: string[] = ['X', 'R', 'S2', 'S1', 'A', 'B', 'C', 'D']
 
 export const YEAR_MIN = Math.min(...CARS.map((c) => c.year))
-export const YEAR_MAX = Math.max(...CARS.map((c) => c.year))
+/**
+ * Slider ceiling for the year filter, displayed as "2027+". The dataset has a lone
+ * futuristic outlier (a 2554 concept car); rather than stretch the slider across a
+ * ~500-year empty gap, we cap the domain here and treat the top of the slider as an
+ * open-ended bound that still includes anything beyond it (see `matchesFilters`).
+ */
+export const YEAR_MAX = 2027
 
 /**
- * Cost-range slider domain. Base prices all start at 1000, but users edit prices
- * upward, so we use a fixed, generous domain rather than the (degenerate) data min/max.
+ * Cost-range slider domain, with the ceiling displayed as "5,000,000+". A handful of
+ * cars cost far more (up to 70M); like the year slider, the top is an open-ended bound
+ * that still includes them (see `matchesFilters`). Base prices start low but users edit
+ * prices upward, so the floor stays at 0 rather than the data min.
  */
 export const COST_FLOOR = 0
-export const COST_CEIL = 20_000_000
+export const COST_CEIL = 5_000_000
 export const COST_STEP = 10_000

@@ -1,4 +1,4 @@
 - [x] Hardcode class options to `X`, `R`, `S2`, `S1`, `A`, `B`, `C`, `D`.
 - [x] Improve Category and Manufacturer multi-select UX to industry standard (evaluate component library options).
-- [ ] Improve Year Range and Cost range slider UX to industry standard (evaluate component library options).
-- [ ] Fix Year range max to `2027+`; when `2027+` is selected as max, pass `null` max year so the `2554` futuristic car still appears. The cost range should have same behavior, where slider right end is `5,000,000+`.
+- [x] Improve Year Range and Cost range slider UX to industry standard (evaluate component library options).
+- [x] Fix Year range max to `2027+`; when `2027+` is selected as max, pass `null` max year so the `2554` futuristic car still appears. The cost range should have same behavior, where slider right end is `5,000,000+`.

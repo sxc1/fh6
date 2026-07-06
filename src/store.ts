@@ -129,11 +129,27 @@ export const useStore = create<WishlistState>()(
     }),
     {
       name: 'fh6-wishlist',
-      version: 2,
+      version: 3,
       // v1 -> v2 added `wishlistViewMode`. The default shallow merge fills the
       // new field from initial state, so persisted state passes through as-is
       // (existing users keep their wishlist, prices, and browser viewMode).
-      migrate: (persisted) => persisted as WishlistState,
+      // v2 -> v3 shrank the year/cost slider ceilings (2554 -> 2027, 20M -> 5M)
+      // and made the top of each slider an open-ended bound. Clamp any stored
+      // bound that sat above a new ceiling down to it, so the thumb stays on the
+      // track and the range still admits the out-of-domain outliers.
+      migrate: (persisted) => {
+        const s = persisted as WishlistState
+        if (s?.filters) {
+          const [y0, y1] = s.filters.yearRange
+          const [c0, c1] = s.filters.costRange
+          s.filters = {
+            ...s.filters,
+            yearRange: [Math.max(YEAR_MIN, y0), Math.min(YEAR_MAX, y1)],
+            costRange: [Math.max(COST_FLOOR, c0), Math.min(COST_CEIL, c1)],
+          }
+        }
+        return s
+      },
     },
   ),
 )

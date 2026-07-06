@@ -12,6 +12,11 @@ interface RangeSliderProps {
   onChange: (value: [number, number]) => void
   /** Formats a bound for display when the input isn't being edited (e.g. "20,000,000 CR"). */
   formatValue?: (value: number) => string
+  /**
+   * When true, the max bound is an open-ended limit: at the ceiling its display gets a
+   * trailing "+" (e.g. "2027+"), signalling everything beyond `max` is included too.
+   */
+  openEndedMax?: boolean
 }
 
 /**
@@ -84,8 +89,13 @@ export function RangeSlider({
   step = 1,
   onChange,
   formatValue = (v) => String(v),
+  openEndedMax = false,
 }: RangeSliderProps) {
   const [lo, hi] = value
+
+  // At the ceiling, the max bound reads "…+"; below it, it formats like any other value.
+  const formatMax =
+    openEndedMax && hi >= max ? (v: number) => `${formatValue(v)}+` : formatValue
 
   return (
     <div>
@@ -121,7 +131,7 @@ export function RangeSlider({
           hi={max}
           step={step}
           onCommit={(n) => onChange([lo, n])}
-          formatValue={formatValue}
+          formatValue={formatMax}
           align="right"
           ariaLabel="Maximum"
         />
