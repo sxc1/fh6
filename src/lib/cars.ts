@@ -1,6 +1,6 @@
 import Papa from 'papaparse'
 import csvRaw from '../../data/fh6-cars.csv?raw'
-import { classRank, type Car } from './types'
+import { type Car } from './types'
 
 interface RawRow {
   Make: string
@@ -79,10 +79,11 @@ export const CAR_TYPES: string[] = [...new Set(CARS.map((c) => c.type))].sort((a
   a.localeCompare(b),
 )
 
-/** Distinct classes present in the data, ordered by performance rank. */
-export const CLASSES: string[] = [...new Set(CARS.map((c) => c.carClass))].sort(
-  (a, b) => classRank(a) - classRank(b),
-)
+/**
+ * Class filter options, hardcoded (fastest→slowest) so the UI always offers the
+ * full set regardless of what's currently present in the CSV.
+ */
+export const CLASSES: string[] = ['X', 'R', 'S2', 'S1', 'A', 'B', 'C', 'D']
 
 export const YEAR_MIN = Math.min(...CARS.map((c) => c.year))
 export const YEAR_MAX = Math.max(...CARS.map((c) => c.year))
