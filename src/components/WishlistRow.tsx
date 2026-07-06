@@ -3,7 +3,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { carImageUrl } from '../lib/carImages'
 import type { Car, ViewMode } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
-import { ClassBadge, PriceDisplay } from './ui'
+import { ClassBadge } from './ClassBadge'
+import { PriceDisplay } from './PriceDisplay'
 
 export function WishlistRow({
   car,

@@ -1,7 +1,8 @@
 import { effectivePrice, useStore } from '../store'
 import type { Car, ViewMode } from '../lib/types'
 import { carImageUrl } from '../lib/carImages'
-import { ClassBadge, PriceDisplay } from './ui'
+import { ClassBadge } from './ClassBadge'
+import { PriceDisplay } from './PriceDisplay'
 
 function useCarBindings(car: Car) {
   const inWishlist = useStore((s) => s.wishlist.includes(car.id))
