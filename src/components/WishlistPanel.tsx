@@ -17,6 +17,7 @@ import { exportWishlistCsv, parseWishlistCsv } from '../lib/csv'
 import { matchesFilters } from '../lib/filtering'
 import type { Car } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
+import { ConfirmDialog } from './ConfirmDialog'
 import { WishlistRow } from './WishlistRow'
 
 function Toggle({
@@ -191,16 +192,24 @@ export function WishlistPanel() {
               List
             </button>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              if (wishlist.length && confirm('Clear the entire wishlist?')) clearWishlist()
-            }}
-            disabled={wishlist.length === 0}
-            className="rounded-md px-3 py-1.5 text-sm font-semibold text-destructive hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Clear
-          </button>
+          <ConfirmDialog
+            title="Clear wishlist?"
+            description={`This removes all ${wishlist.length} car${
+              wishlist.length === 1 ? '' : 's'
+            } from your wishlist and can't be undone.`}
+            confirmLabel="Clear wishlist"
+            destructive
+            onConfirm={clearWishlist}
+            trigger={
+              <button
+                type="button"
+                disabled={wishlist.length === 0}
+                className="rounded-md px-3 py-1.5 text-sm font-semibold text-destructive hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Clear
+              </button>
+            }
+          />
         </div>
         <Toggle
           label="Apply filters to wishlist"
