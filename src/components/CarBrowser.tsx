@@ -91,13 +91,16 @@ export function CarBrowser() {
         {cars.length.toLocaleString()} car{cars.length === 1 ? '' : 's'}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
+      <div className="@container min-h-0 flex-1 overflow-y-auto px-4 pb-6">
         {cars.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No cars match the current filters.
           </div>
         ) : viewMode === 'tile' ? (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3">
+          // Column count keys off this scroll column's own width (container query),
+          // not the viewport, since fixed side panels change how much room is here.
+          // Capped at 6 columns wide on the widest layouts.
+          <div className="grid grid-cols-2 gap-3 @[480px]:grid-cols-3 @[680px]:grid-cols-4 @[880px]:grid-cols-5 @[1080px]:grid-cols-6">
             {cars.map((car) => (
               <CarCard key={car.id} car={car} viewMode="tile" />
             ))}

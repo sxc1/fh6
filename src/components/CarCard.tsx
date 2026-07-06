@@ -1,5 +1,6 @@
 import { effectivePrice, useStore } from '../store'
 import type { Car, ViewMode } from '../lib/types'
+import { carImageUrl } from '../lib/carImages'
 import { ClassBadge, PriceDisplay } from './ui'
 
 function useCarBindings(car: Car) {
@@ -31,29 +32,48 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
   const toggle = () => (inWishlist ? removeFromWishlist(car.id) : addToWishlist(car.id))
 
   if (viewMode === 'tile') {
+    const imageUrl = carImageUrl(car)
     return (
-      <div className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3 shadow-sm">
-        <div className="flex items-start justify-between gap-2">
-          <ClassBadge carClass={car.carClass} rating={car.classRating} />
-          <span className="text-xs text-muted-foreground">{car.year}</span>
+      <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+        {/* Hero render on a light "studio" backdrop so cars of every color stay legible. */}
+        <div className="aspect-[16/9] w-full bg-[radial-gradient(circle_at_50%_35%,#f8fafc,#cbd5e1)]">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={`${car.make} ${car.name}`}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-contain p-2"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs font-medium text-slate-500">
+              No image
+            </div>
+          )}
         </div>
-        <div className="min-h-10">
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {car.make}
+        <div className="flex flex-1 flex-col gap-2 p-3">
+          <div className="flex items-start justify-between gap-2">
+            <ClassBadge carClass={car.carClass} rating={car.classRating} />
+            <span className="text-xs text-muted-foreground">{car.year}</span>
           </div>
-          <div className="text-sm font-semibold leading-tight">{car.name}</div>
-        </div>
-        <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-          <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
-            {car.type}
-          </span>
-          <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
-            {car.country}
-          </span>
-        </div>
-        <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <PriceDisplay value={price} />
-          <AddButton inWishlist={inWishlist} onClick={toggle} />
+          <div className="min-h-10">
+            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {car.make}
+            </div>
+            <div className="text-sm font-semibold leading-tight">{car.name}</div>
+          </div>
+          <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+            <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
+              {car.type}
+            </span>
+            <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
+              {car.country}
+            </span>
+          </div>
+          <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+            <PriceDisplay value={price} />
+            <AddButton inWishlist={inWishlist} onClick={toggle} />
+          </div>
         </div>
       </div>
     )
