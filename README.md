@@ -1,23 +1,26 @@
-# fh6-wishlist
+# Forza Horizon 6 Wishlist
 
-A wishlisting tool for Forza Horizon 6 cars that allows you to filter on many categories, to make sure you always have a car available for a race (and also identify which cars to prioiritize tuning), published at `https://sxc1.github.io/fh6/`.
+Published to `https://sxc1.github.io/fh6/`
 
-Single-page app built with Vite + React + TypeScript and styled with Tailwind CSS v4.
-It loads the FH6 car list and lets you filter, browse, and build a strictly-ordered
-wishlist with per-car prices, obtained tracking, and CSV export/import. All state is
-saved to your browser's `localStorage`.
+## The Problem
 
-## Features
+All races in Forza Horizon (besides the Street Race category) restrict your car selection based on Car Type. This means that you need to maintain a tuned car for each of these Car Type category
 
-- Collapsible left filter panel: Class, Category (car type), Manufacturer, Year range, Cost range.
-- Central browser: text search, sorting (manufacturer, name, year, class, rating, price), and list/tile views.
-- Right wishlist: drag-and-drop ordering, "apply filters to wishlist" toggle, mark cars as obtained, hide obtained, inline price editing, and a running total.
-- Export the wishlist to CSV and re-import it later.
+## The Solution
+
+This app serves as a companion tool that allows you to filter on Car Type + many other categories to ensure you have a well-rounded garage.
+
+## Features 
+
+1. **Car browser** - text search, sorting (manufacturer, name, year, class, rating, price), and list/tile views.
+2. **Comprehensive filtering** - Class, Category (car type), Manufacturer, Year range, Cost range.
+3. **Wishlist** -  drag-and-drop re-ordering, filtering, "acquired" marking, and cost totals
+4. **Import and export** - for saving and sharing
 
 ## Export / import format
 
 Export produces a CSV of the wishlist, in wishlist order, with the columns:
-`Make, Car Name, Price, Car Type, Car Class, Class Rating, Country, Collection`.
+`Acquired, Make, Car Name, Price, Car Type, Car Class, Class Rating, Country, Collection`.
 Import reads that CSV, matches rows back to the dataset by make + car name, and rebuilds the
 ordered wishlist (row order = wishlist order) along with the imported prices.
 
