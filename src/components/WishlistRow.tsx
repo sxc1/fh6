@@ -2,12 +2,11 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Car } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
-import { ClassBadge, PriceInput } from './ui'
+import { ClassBadge, PriceDisplay } from './ui'
 
 export function WishlistRow({ car, index }: { car: Car; index: number }) {
   const price = useStore((s) => effectivePrice(car.id, s.prices))
   const obtained = useStore((s) => s.obtained.includes(car.id))
-  const setPrice = useStore((s) => s.setPrice)
   const toggleObtained = useStore((s) => s.toggleObtained)
   const removeFromWishlist = useStore((s) => s.removeFromWishlist)
 
@@ -62,7 +61,7 @@ export function WishlistRow({ car, index }: { car: Car; index: number }) {
         </div>
       </div>
 
-      <PriceInput value={price} onCommit={(v) => setPrice(car.id, v)} />
+      <PriceDisplay value={price} />
 
       <button
         type="button"

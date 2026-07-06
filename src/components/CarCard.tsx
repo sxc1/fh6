@@ -1,14 +1,13 @@
 import { effectivePrice, useStore } from '../store'
 import type { Car, ViewMode } from '../lib/types'
-import { ClassBadge, PriceInput } from './ui'
+import { ClassBadge, PriceDisplay } from './ui'
 
 function useCarBindings(car: Car) {
   const inWishlist = useStore((s) => s.wishlist.includes(car.id))
   const price = useStore((s) => effectivePrice(car.id, s.prices))
   const addToWishlist = useStore((s) => s.addToWishlist)
   const removeFromWishlist = useStore((s) => s.removeFromWishlist)
-  const setPrice = useStore((s) => s.setPrice)
-  return { inWishlist, price, addToWishlist, removeFromWishlist, setPrice }
+  return { inWishlist, price, addToWishlist, removeFromWishlist }
 }
 
 function AddButton({ inWishlist, onClick }: { inWishlist: boolean; onClick: () => void }) {
@@ -28,7 +27,7 @@ function AddButton({ inWishlist, onClick }: { inWishlist: boolean; onClick: () =
 }
 
 export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
-  const { inWishlist, price, addToWishlist, removeFromWishlist, setPrice } = useCarBindings(car)
+  const { inWishlist, price, addToWishlist, removeFromWishlist } = useCarBindings(car)
   const toggle = () => (inWishlist ? removeFromWishlist(car.id) : addToWishlist(car.id))
 
   if (viewMode === 'tile') {
@@ -53,7 +52,7 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
           </span>
         </div>
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <PriceInput value={price} onCommit={(v) => setPrice(car.id, v)} />
+          <PriceDisplay value={price} />
           <AddButton inWishlist={inWishlist} onClick={toggle} />
         </div>
       </div>
@@ -72,7 +71,7 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
       <span className="hidden w-12 shrink-0 text-right text-sm text-muted-foreground sm:block">
         {car.year}
       </span>
-      <PriceInput value={price} onCommit={(v) => setPrice(car.id, v)} />
+      <PriceDisplay value={price} className="w-24" />
       <AddButton inWishlist={inWishlist} onClick={toggle} />
     </div>
   )

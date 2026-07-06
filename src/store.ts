@@ -37,9 +37,8 @@ interface WishlistState {
   setWishlistOrder: (ids: string[]) => void
   clearWishlist: () => void
 
-  // Prices (overrides on top of CSV base price)
+  // Prices (overrides on top of CSV base price, set via CSV import)
   prices: Record<string, number>
-  setPrice: (id: string, price: number) => void
 
   // Obtained tracking
   obtained: string[]
@@ -98,8 +97,6 @@ export const useStore = create<WishlistState>()(
       clearWishlist: () => set({ wishlist: [] }),
 
       prices: {},
-      setPrice: (id, price) =>
-        set((s) => ({ prices: { ...s.prices, [id]: Math.max(0, Math.round(price)) } })),
 
       obtained: [],
       toggleObtained: (id) =>

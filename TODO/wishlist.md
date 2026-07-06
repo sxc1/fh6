@@ -1,4 +1,4 @@
 - [ ] Switch car list display to single-column tile format.
-- [ ] Remove input ability for cost.
+- [x] Remove input ability for cost.
 - [ ] Remove draggable icon.
 - [ ] Remove obtained checkbox; clicking a car tile should mark/unmark obtained and show an `"Obtained"` overlay.
