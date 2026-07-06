@@ -9,6 +9,7 @@ import {
   YEAR_MAX,
   YEAR_MIN,
 } from '../lib/cars'
+import { getClassColor } from '../lib/classColors'
 import { useStore } from '../store'
 import { MultiSelect } from './MultiSelect'
 import { RangeSlider } from './RangeSlider'
@@ -134,6 +135,7 @@ export function FilterPanel() {
           <div className="flex flex-wrap gap-2">
             {CLASSES.map((c) => {
               const active = filters.classes.includes(c)
+              const classColor = getClassColor(c)
               return (
                 <button
                   key={c}
@@ -141,9 +143,14 @@ export function FilterPanel() {
                   onClick={() => toggleClass(c)}
                   className={`rounded-md border px-3 py-1 text-sm font-medium transition-colors ${
                     active
-                      ? 'border-primary bg-primary text-primary-foreground'
+                      ? 'border-primary bg-primary text-white'
                       : 'border-border bg-card hover:bg-secondary'
                   }`}
+                  style={
+                    active && classColor
+                      ? { backgroundColor: classColor, borderColor: classColor }
+                      : undefined
+                  }
                 >
                   {c}
                 </button>
