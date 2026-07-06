@@ -1,0 +1,139 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { CARS_BY_ID, COST_CEIL, COST_FLOOR, YEAR_MAX, YEAR_MIN } from './lib/cars'
+import type { Filters, SortDir, SortField, ViewMode } from './lib/types'
+
+export const DEFAULT_FILTERS: Filters = {
+  classes: [],
+  categories: [],
+  manufacturers: [],
+  yearRange: [YEAR_MIN, YEAR_MAX],
+  costRange: [COST_FLOOR, COST_CEIL],
+}
+
+interface WishlistState {
+  // Filters
+  filters: Filters
+  toggleClass: (value: string) => void
+  toggleCategory: (value: string) => void
+  toggleManufacturer: (value: string) => void
+  setYearRange: (range: [number, number]) => void
+  setCostRange: (range: [number, number]) => void
+  resetFilters: () => void
+
+  // Browser UI
+  search: string
+  setSearch: (value: string) => void
+  sortField: SortField
+  sortDir: SortDir
+  setSort: (field: SortField, dir: SortDir) => void
+  viewMode: ViewMode
+  setViewMode: (mode: ViewMode) => void
+
+  // Wishlist (strictly ordered by array position)
+  wishlist: string[]
+  addToWishlist: (id: string) => void
+  removeFromWishlist: (id: string) => void
+  setWishlistOrder: (ids: string[]) => void
+  clearWishlist: () => void
+
+  // Prices (overrides on top of CSV base price)
+  prices: Record<string, number>
+  setPrice: (id: string, price: number) => void
+
+  // Obtained tracking
+  obtained: string[]
+  toggleObtained: (id: string) => void
+
+  // Wishlist view controls
+  applyFiltersToWishlist: boolean
+  toggleApplyFiltersToWishlist: () => void
+  hideObtained: boolean
+  toggleHideObtained: () => void
+
+  // App chrome
+  leftPanelCollapsed: boolean
+  toggleLeftPanel: () => void
+
+  // Bulk import (from CSV)
+  importWishlist: (entries: { id: string; price: number }[]) => void
+}
+
+function toggleValue(list: string[], value: string): string[] {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+}
+
+export const useStore = create<WishlistState>()(
+  persist(
+    (set) => ({
+      filters: DEFAULT_FILTERS,
+      toggleClass: (value) =>
+        set((s) => ({ filters: { ...s.filters, classes: toggleValue(s.filters.classes, value) } })),
+      toggleCategory: (value) =>
+        set((s) => ({
+          filters: { ...s.filters, categories: toggleValue(s.filters.categories, value) },
+        })),
+      toggleManufacturer: (value) =>
+        set((s) => ({
+          filters: { ...s.filters, manufacturers: toggleValue(s.filters.manufacturers, value) },
+        })),
+      setYearRange: (range) => set((s) => ({ filters: { ...s.filters, yearRange: range } })),
+      setCostRange: (range) => set((s) => ({ filters: { ...s.filters, costRange: range } })),
+      resetFilters: () => set({ filters: DEFAULT_FILTERS }),
+
+      search: '',
+      setSearch: (value) => set({ search: value }),
+      sortField: 'make',
+      sortDir: 'asc',
+      setSort: (sortField, sortDir) => set({ sortField, sortDir }),
+      viewMode: 'list',
+      setViewMode: (viewMode) => set({ viewMode }),
+
+      wishlist: [],
+      addToWishlist: (id) =>
+        set((s) => (s.wishlist.includes(id) ? s : { wishlist: [...s.wishlist, id] })),
+      removeFromWishlist: (id) =>
+        set((s) => ({ wishlist: s.wishlist.filter((w) => w !== id) })),
+      setWishlistOrder: (ids) => set({ wishlist: ids }),
+      clearWishlist: () => set({ wishlist: [] }),
+
+      prices: {},
+      setPrice: (id, price) =>
+        set((s) => ({ prices: { ...s.prices, [id]: Math.max(0, Math.round(price)) } })),
+
+      obtained: [],
+      toggleObtained: (id) =>
+        set((s) => ({ obtained: toggleValue(s.obtained, id) })),
+
+      applyFiltersToWishlist: false,
+      toggleApplyFiltersToWishlist: () =>
+        set((s) => ({ applyFiltersToWishlist: !s.applyFiltersToWishlist })),
+      hideObtained: false,
+      toggleHideObtained: () => set((s) => ({ hideObtained: !s.hideObtained })),
+
+      leftPanelCollapsed: false,
+      toggleLeftPanel: () => set((s) => ({ leftPanelCollapsed: !s.leftPanelCollapsed })),
+
+      importWishlist: (entries) =>
+        set((s) => {
+          const order: string[] = []
+          const prices = { ...s.prices }
+          for (const entry of entries) {
+            if (!order.includes(entry.id)) order.push(entry.id)
+            if (Number.isFinite(entry.price)) prices[entry.id] = Math.max(0, Math.round(entry.price))
+          }
+          return { wishlist: order, prices }
+        }),
+    }),
+    {
+      name: 'fh6-wishlist',
+      version: 1,
+    },
+  ),
+)
+
+/** Effective price for a car: user override if present, otherwise CSV base price. */
+export function effectivePrice(id: string, prices: Record<string, number>): number {
+  if (id in prices) return prices[id]
+  return CARS_BY_ID.get(id)?.basePrice ?? 0
+}
