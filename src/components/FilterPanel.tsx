@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   CAR_TYPES,
   CLASSES,
@@ -10,6 +10,7 @@ import {
   YEAR_MIN,
 } from '../lib/cars'
 import { useStore } from '../store'
+import { MultiSelect } from './MultiSelect'
 import { RangeSlider } from './RangeSlider'
 
 function Section({
@@ -51,28 +52,6 @@ function Section({
   )
 }
 
-function CheckItem({
-  label,
-  checked,
-  onToggle,
-}: {
-  label: string
-  checked: boolean
-  onToggle: () => void
-}) {
-  return (
-    <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-secondary">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onToggle}
-        className="h-4 w-4 accent-primary"
-      />
-      <span className="truncate">{label}</span>
-    </label>
-  )
-}
-
 export function FilterPanel() {
   const filters = useStore((s) => s.filters)
   const toggleClass = useStore((s) => s.toggleClass)
@@ -81,19 +60,6 @@ export function FilterPanel() {
   const setYearRange = useStore((s) => s.setYearRange)
   const setCostRange = useStore((s) => s.setCostRange)
   const resetFilters = useStore((s) => s.resetFilters)
-
-  const [makeQuery, setMakeQuery] = useState('')
-  const [typeQuery, setTypeQuery] = useState('')
-
-  const filteredMakes = useMemo(() => {
-    const q = makeQuery.trim().toLowerCase()
-    return q ? MAKES.filter((m) => m.toLowerCase().includes(q)) : MAKES
-  }, [makeQuery])
-
-  const filteredTypes = useMemo(() => {
-    const q = typeQuery.trim().toLowerCase()
-    return q ? CAR_TYPES.filter((t) => t.toLowerCase().includes(q)) : CAR_TYPES
-  }, [typeQuery])
 
   const activeCount =
     filters.classes.length +
@@ -140,43 +106,23 @@ export function FilterPanel() {
         </Section>
 
         <Section title="Category" count={filters.categories.length}>
-          <input
-            type="text"
-            value={typeQuery}
-            onChange={(e) => setTypeQuery(e.target.value)}
-            placeholder="Search categories..."
-            className="mb-2 w-full rounded-md border border-input bg-card px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+          <MultiSelect
+            options={CAR_TYPES}
+            selected={filters.categories}
+            onToggle={toggleCategory}
+            placeholder="All categories"
+            searchPlaceholder="Search categories..."
           />
-          <div className="max-h-56 overflow-y-auto pr-1">
-            {filteredTypes.map((t) => (
-              <CheckItem
-                key={t}
-                label={t}
-                checked={filters.categories.includes(t)}
-                onToggle={() => toggleCategory(t)}
-              />
-            ))}
-          </div>
         </Section>
 
         <Section title="Manufacturer" count={filters.manufacturers.length}>
-          <input
-            type="text"
-            value={makeQuery}
-            onChange={(e) => setMakeQuery(e.target.value)}
-            placeholder="Search manufacturers..."
-            className="mb-2 w-full rounded-md border border-input bg-card px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+          <MultiSelect
+            options={MAKES}
+            selected={filters.manufacturers}
+            onToggle={toggleManufacturer}
+            placeholder="All manufacturers"
+            searchPlaceholder="Search manufacturers..."
           />
-          <div className="max-h-56 overflow-y-auto pr-1">
-            {filteredMakes.map((m) => (
-              <CheckItem
-                key={m}
-                label={m}
-                checked={filters.manufacturers.includes(m)}
-                onToggle={() => toggleManufacturer(m)}
-              />
-            ))}
-          </div>
         </Section>
 
         <Section title="Year range">
