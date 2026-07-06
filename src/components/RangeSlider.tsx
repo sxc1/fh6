@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  RangeSlider as KendoRangeSlider,
-  type RangeSliderChangeEvent,
-} from '@progress/kendo-react-inputs'
+import * as Slider from '@radix-ui/react-slider'
 
 /**
  * Delay (ms) before an in-progress drag commits to the store, which re-filters and
@@ -165,25 +162,38 @@ export function RangeSlider({
 
   return (
     <div>
-      <KendoRangeSlider
-        className="fh6-range"
+      <Slider.Root
+        className="relative flex h-5 w-full touch-none select-none items-center"
         min={isLog ? 0 : min}
         max={isLog ? POS_MAX : max}
         step={isLog ? 1 : step}
-        value={{ start: toPos(lo), end: toPos(hi) }}
-        onChange={(e: RangeSliderChangeEvent) => {
-          // KendoReact's `step` only governs keyboard arrows; dragging emits continuous
-          // floats. Map back to a real value, then snap to `step` (and clamp) so committed
-          // bounds stay integral in either scale.
+        value={[toPos(lo), toPos(hi)]}
+        minStepsBetweenThumbs={0}
+        onValueChange={(vals: number[]) => {
+          // In log mode the track runs over integer position space, so Radix already snaps
+          // to whole positions; map each back to a real value, then snap to `step` (and
+          // clamp) so committed bounds stay integral in either scale.
           const snap = (raw: number) => {
             const v = fromPos(raw)
             return Math.min(max, Math.max(min, Math.round(v / step) * step))
           }
-          const s = snap(e.value.start)
-          const en = snap(e.value.end)
+          const s = snap(vals[0])
+          const en = snap(vals[1])
           commitDebounced([Math.min(s, en), Math.max(s, en)])
         }}
-      />
+      >
+        <Slider.Track className="relative h-1.5 w-full grow rounded-full bg-secondary">
+          <Slider.Range className="absolute h-full rounded-full bg-primary" />
+        </Slider.Track>
+        <Slider.Thumb
+          aria-label="Minimum"
+          className="block h-4 w-4 rounded-full bg-primary shadow outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+        <Slider.Thumb
+          aria-label="Maximum"
+          className="block h-4 w-4 rounded-full bg-primary shadow outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+      </Slider.Root>
       <div className="mt-2 flex items-center justify-between gap-2">
         <EditableBound
           value={lo}

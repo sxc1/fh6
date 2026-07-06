@@ -28,20 +28,3 @@
     scrollbar-color: var(--border) transparent;
   }
 }
-
-/* KendoReact RangeSlider, retinted to our palette. Kendo's base colors come from
-   :root --kendo-color-* vars (dark theme); we only remap primary to our pink and
-   strip the step ticks the design doesn't want. */
-:root {
-  --kendo-color-primary: var(--primary);
-}
-
-/* Full-width track that fits the filter panel. */
-.fh6-range.k-slider {
-  width: 100%;
-}
-
-/* Remove the step tick markers. */
-.fh6-range .k-slider-items {
-  display: none;
-}
