@@ -24,20 +24,13 @@ export function WishlistRow({ car, index }: { car: Car; index: number }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm ${
+      className={`flex cursor-grab touch-none items-center gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing ${
         obtained ? 'opacity-60' : ''
       }`}
+      title="Drag to reorder"
+      {...attributes}
+      {...listeners}
     >
-      <button
-        type="button"
-        className="cursor-grab touch-none px-1 text-muted-foreground hover:text-foreground active:cursor-grabbing"
-        title="Drag to reorder"
-        {...attributes}
-        {...listeners}
-      >
-        &#8942;&#8942;
-      </button>
-
       <span className="w-6 shrink-0 text-center text-xs font-semibold text-muted-foreground tabular-nums">
         {index + 1}
       </span>
