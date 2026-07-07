@@ -2,13 +2,11 @@
 
 Published to `https://sxc1.github.io/fh6/`
 
-## The Problem
+## Use Case
 
-All races in Forza Horizon (besides the Street Race category) restrict your car selection based on Car Type. This means that you need to maintain a tuned car for each of these Car Type category
+All races in Forza Horizon restrict your car selection based on Car Type, maintaining a tuned car for each Car Type is necessary.
 
-## The Solution
-
-This app serves as a companion tool that allows you to filter on Car Type + many other categories to ensure you have a well-rounded garage.
+Because of this, I've created this companion tool that allows you to build a wishlist, filtering on Car Type + many other categories to ensure you have a well-rounded garage.
 
 ## Features 
 
@@ -26,11 +24,13 @@ ordered wishlist (row order = wishlist order) along with the imported prices.
 
 ## Tech
 
-- Vite, React 19, TypeScript
-- Tailwind CSS v4 (`@tailwindcss/vite`), themed via `src/index.css`
+- **Core Stack** - Vite, React 19, TypeScript
+- **Styling** - Tailwind CSS v4 (`@tailwindcss/vite`), themed via `src/index.css`
+- **Components** - radix-ui, country-flag-icons
 - Zustand (state + `localStorage` persistence)
 - @dnd-kit (drag-and-drop reordering)
 - PapaParse (CSV parsing / generation)
+- **AI Tooling** - Claude Code, Codex, and Cursor (varied for experimentation)
 
 ## Disclaimer
 
