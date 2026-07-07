@@ -1,10 +1,9 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { carImageUrl } from '../lib/carImages'
 import type { Car, ViewMode } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
+import { CarTilePresentational } from './CarTilePresentational'
 import { ClassBadge } from './ClassBadge'
-import { CountryFlag } from './CountryFlag'
 import { PriceDisplay } from './PriceDisplay'
 
 export function WishlistRow({
@@ -37,7 +36,6 @@ export function WishlistRow({
   }
 
   const dragProps = {
-    ref: setNodeRef,
     style,
     onClick: () => toggleAcquired(car.id),
     title: 'Click to toggle acquired; drag to reorder',
@@ -86,64 +84,29 @@ export function WishlistRow({
     )
   }
 
-  const imageUrl = carImageUrl(car)
   return (
-    <div
+    <CarTilePresentational
+      ref={setNodeRef}
+      car={car}
+      price={price}
       {...dragProps}
-      className="relative flex cursor-grab touch-none flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm active:cursor-grabbing"
-    >
-      {/* Hero render on a light "studio" backdrop so cars of every color stay legible. */}
-      <div className="relative aspect-[16/9] w-full bg-[radial-gradient(circle_at_50%_35%,#f8fafc,#cbd5e1)]">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={`${car.make} ${car.name}`}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="h-full w-full object-contain p-2"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs font-medium text-slate-500">
-            No image
-          </div>
-        )}
-        <span className="absolute left-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-background/80 px-1.5 text-xs font-bold tabular-nums text-foreground shadow-sm">
+      className="cursor-grab touch-none active:cursor-grabbing"
+      imageTopLeft={
+        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-background/80 px-1.5 text-xs font-bold tabular-nums text-foreground shadow-sm">
           {index + 1}
         </span>
+      }
+      imageTopRight={
         <button
           type="button"
           onClick={remove}
-          className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-background/80 text-sm text-muted-foreground shadow-sm hover:bg-destructive hover:text-destructive-foreground"
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-background/80 text-sm text-muted-foreground shadow-sm hover:bg-destructive hover:text-destructive-foreground"
           title="Remove from wishlist"
         >
           &times;
         </button>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-2 p-3">
-        <div className="flex items-start justify-between gap-2">
-          <ClassBadge carClass={car.carClass} rating={car.classRating} />
-          <span className="text-xs text-muted-foreground">{car.year}</span>
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {car.make}
-          </div>
-          <div className="text-sm font-semibold leading-tight">{car.name}</div>
-        </div>
-        <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="rounded bg-secondary px-1.5 py-0.5 text-secondary-foreground">
-              {car.type}
-            </span>
-            <CountryFlag country={car.country} />
-          </div>
-          <PriceDisplay value={price} />
-        </div>
-      </div>
-
-      {acquiredOverlay}
-    </div>
+      }
+      overlay={acquiredOverlay}
+    />
   )
 }

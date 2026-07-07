@@ -3,7 +3,7 @@ import { CARS } from '../lib/cars'
 import { compareCars, isUnobtainable, matchesFilters, matchesSearch } from '../lib/filtering'
 import type { SortField } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
-import { CarCard } from './CarCard'
+import { CarBrowserCard } from './CarBrowserCard'
 
 const SORT_OPTIONS: { value: SortField; label: string }[] = [
   { value: 'make', label: 'Manufacturer' },
@@ -105,13 +105,13 @@ export function CarBrowser() {
           // Intentionally capped lower so tiles stay readable and less condensed.
           <div className="grid grid-cols-1 gap-5 @[560px]:grid-cols-2 @[920px]:grid-cols-3 @[1320px]:grid-cols-4">
             {cars.map((car) => (
-              <CarCard key={car.id} car={car} viewMode="tile" />
+              <CarBrowserCard key={car.id} car={car} viewMode="tile" />
             ))}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             {cars.map((car) => (
-              <CarCard key={car.id} car={car} viewMode="list" />
+              <CarBrowserCard key={car.id} car={car} viewMode="list" />
             ))}
           </div>
         )}

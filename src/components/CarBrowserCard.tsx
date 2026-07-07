@@ -1,7 +1,6 @@
 import { effectivePrice, useStore } from '../store'
 import type { Car, ViewMode } from '../lib/types'
-import { carImageUrl } from '../lib/carImages'
-import { CarTypeBadge } from './CarTypeBadge'
+import { CarTilePresentational } from './CarTilePresentational'
 import { ClassBadge } from './ClassBadge'
 import { CountryFlag } from './CountryFlag'
 import { PriceDisplay } from './PriceDisplay'
@@ -23,57 +22,21 @@ function AddedOverlay() {
   )
 }
 
-export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
+export function CarBrowserCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
   const { inWishlist, price, addToWishlist, removeFromWishlist } = useCarBindings(car)
   const toggle = () => (inWishlist ? removeFromWishlist(car.id) : addToWishlist(car.id))
   const title = inWishlist ? 'Click to remove from wishlist' : 'Click to add to wishlist'
 
   if (viewMode === 'tile') {
-    const imageUrl = carImageUrl(car)
     return (
-      <div
+      <CarTilePresentational
+        car={car}
+        price={price}
         onClick={toggle}
         title={title}
-        className="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm"
-      >
-        {/* Hero render on a light "studio" backdrop so cars of every color stay legible. */}
-        <div className="aspect-[16/9] w-full bg-[radial-gradient(circle_at_50%_35%,#f8fafc,#cbd5e1)]">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={`${car.make} ${car.name}`}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-contain p-2"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-xs font-medium text-slate-500">
-              No image
-            </div>
-          )}
-        </div>
-        <div className="flex flex-1 flex-col gap-2 p-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          <CountryFlag country={car.country} className="ml-0.5" />
-              <span className="truncate">{car.make}</span>
-            </div>
-            <ClassBadge carClass={car.carClass} rating={car.classRating} />
-          </div>
-          <div className="min-h-5 text-sm font-semibold leading-tight">
-            <span className="text-muted-foreground">{car.year}</span>{' '}
-            <span>{car.modelName}</span>
-          </div>
-          <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <RarityDisplay rarity={car.rarity} />
-              <CarTypeBadge type={car.type} />
-            </div>
-            <PriceDisplay value={price} />
-          </div>
-        </div>
-        {inWishlist ? <AddedOverlay /> : null}
-      </div>
+        className="cursor-pointer"
+        overlay={inWishlist ? <AddedOverlay /> : null}
+      />
     )
   }
 
