@@ -4,6 +4,7 @@ import type { Car, ViewMode } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
 import { CarTilePresentational } from './CarTilePresentational'
 import { ClassBadge } from './ClassBadge'
+import { CountryFlag } from './CountryFlag'
 import { PriceDisplay } from './PriceDisplay'
 
 export function WishlistRow({
@@ -52,23 +53,29 @@ export function WishlistRow({
   if (viewMode === 'list') {
     return (
       <div
+        ref={setNodeRef}
         {...dragProps}
-        className="relative flex cursor-grab touch-none items-center gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing"
+        className="relative flex cursor-grab touch-none items-start gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing"
       >
         <span className="w-6 shrink-0 text-center text-xs font-semibold text-muted-foreground tabular-nums">
           {index + 1}
         </span>
 
-        <ClassBadge carClass={car.carClass} />
-
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold">{car.name}</div>
-          <div className="truncate text-xs text-muted-foreground">
-            {car.make} &middot; {car.type}
+          <div className="min-w-0 space-y-1">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <CountryFlag country={car.country} />
+              <div className="truncate text-sm font-semibold">{car.name}</div>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex items-center gap-2">
+                <ClassBadge carClass={car.carClass} rating={car.classRating} />
+                <div className="truncate text-xs text-muted-foreground">{car.type}</div>
+              </div>
+              <PriceDisplay value={price} />
+            </div>
           </div>
         </div>
-
-        <PriceDisplay value={price} />
 
         <button
           type="button"
