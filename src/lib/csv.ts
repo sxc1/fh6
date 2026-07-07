@@ -53,12 +53,19 @@ export function exportWishlistCsv(
 export interface ImportedEntry {
   id: string
   price: number
+  acquired?: boolean
 }
 
 export interface ImportResult {
   entries: ImportedEntry[]
   matched: number
   unmatched: string[]
+}
+
+function parseAcquired(value: string | undefined): boolean | undefined {
+  if (value === undefined) return undefined
+  const normalized = value.trim().toLowerCase()
+  return ['1', 'true', 'yes', 'y', 'acquired', 'owned'].includes(normalized)
 }
 
 export function parseWishlistCsv(text: string): ImportResult {
@@ -83,7 +90,11 @@ export function parseWishlistCsv(text: string): ImportResult {
 
     const priceRaw = (row['Price'] ?? '').replace(/[^0-9.-]/g, '')
     const price = Number.parseFloat(priceRaw)
-    entries.push({ id, price: Number.isFinite(price) ? price : NaN })
+    entries.push({
+      id,
+      price: Number.isFinite(price) ? price : NaN,
+      acquired: parseAcquired(row['Acquired']),
+    })
   }
 
   return { entries, matched: entries.length, unmatched }

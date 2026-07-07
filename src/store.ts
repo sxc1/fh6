@@ -63,7 +63,7 @@ interface WishlistState {
   toggleLeftPanel: () => void
 
   // Bulk import (from CSV)
-  importWishlist: (entries: { id: string; price: number }[]) => void
+  importWishlist: (entries: { id: string; price: number; acquired?: boolean }[]) => void
 }
 
 function toggleValue(list: string[], value: string): string[] {
@@ -134,11 +134,15 @@ export const useStore = create<WishlistState>()(
         set((s) => {
           const order: string[] = []
           const prices = { ...s.prices }
+          const acquired = s.acquired.filter((id) =>
+            entries.some((entry) => entry.id === id && entry.acquired === undefined),
+          )
           for (const entry of entries) {
             if (!order.includes(entry.id)) order.push(entry.id)
             if (Number.isFinite(entry.price)) prices[entry.id] = Math.max(0, Math.round(entry.price))
+            if (entry.acquired && !acquired.includes(entry.id)) acquired.push(entry.id)
           }
-          return { wishlist: order, prices }
+          return { wishlist: order, prices, acquired }
         }),
     }),
     {

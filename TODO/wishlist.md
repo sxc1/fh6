@@ -3,3 +3,4 @@
 - [x] Remove draggable icon.
 - [x] Remove acquired checkbox; clicking a car tile should mark/unmark acquired and show an `"Acquired"` overlay.
 - [x] Add "Acquired" column as first column of wishlist export, filled with 1 (acquired) or 0 (unacquired)
+- [ ] Add button somewhere that sets Category filter to categories not yet in wishlist

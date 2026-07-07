@@ -4,5 +4,6 @@
 - [x] Fix incorrect car class pill colors by identifying correct colors and updating them. (Filter panel buttons for car class should match car class color when selected)
 - [x] Add country flags (to filter as well)
 - [ ] Add car rarity (to filter as well)
+- [ ] Add drag-n-drop FROM car browser to wishlist
 - [ ] Design a new presentation for list items.
 - [ ] Design a new presentation for tiles.
