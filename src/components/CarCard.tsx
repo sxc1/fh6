@@ -55,7 +55,7 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
         <div className="flex flex-1 flex-col gap-2 p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              <CountryFlag country={car.country} />
+          <CountryFlag country={car.country} className="ml-0.5" />
               <span className="truncate">{car.make}</span>
             </div>
             <ClassBadge carClass={car.carClass} rating={car.classRating} />
@@ -87,15 +87,15 @@ export function CarCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">{car.name}</div>
         <div className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+          <CountryFlag country={car.country} className="ml-0.5" />
           <span className="truncate">
             {car.make} &middot; {car.type}
           </span>
-          <CountryFlag country={car.country} />
         </div>
       </div>
-      <span className="hidden w-12 shrink-0 text-right text-sm text-muted-foreground sm:block">
-        {car.year}
-      </span>
+      <div className="hidden shrink-0 sm:block">
+        <RarityDisplay rarity={car.rarity} />
+      </div>
       <PriceDisplay value={price} className="w-24" />
       {inWishlist ? <AddedOverlay /> : null}
     </div>
