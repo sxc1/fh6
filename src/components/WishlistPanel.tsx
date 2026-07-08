@@ -7,9 +7,11 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core'
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   SortableContext,
   arrayMove,
+  rectSortingStrategy,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CARS_BY_ID } from '../lib/cars'
@@ -65,6 +67,8 @@ export function WishlistPanel() {
   const setWishlistOrder = useStore((s) => s.setWishlistOrder)
   const clearWishlist = useStore((s) => s.clearWishlist)
   const importWishlist = useStore((s) => s.importWishlist)
+  const expanded = useStore((s) => s.wishlistPanelExpanded)
+  const toggleExpanded = useStore((s) => s.toggleWishlistPanel)
 
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -143,9 +147,19 @@ export function WishlistPanel() {
     <div className="flex h-full flex-col">
       <div className="border-b border-border px-4 py-3">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            Wishlist
-          </h2>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleExpanded}
+              title={expanded ? 'Collapse wishlist' : 'Expand wishlist'}
+              className="rounded-md border border-input bg-card px-2 py-1 text-sm hover:bg-secondary"
+            >
+              {expanded ? '»' : '«'}
+            </button>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+              Wishlist
+            </h2>
+          </div>
           <div className="flex gap-2">
             <button
               type="button"
@@ -230,7 +244,7 @@ export function WishlistPanel() {
         />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+      <div className="@container min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-3">
         {wishlist.length === 0 ? (
           <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
             Your wishlist is empty. Add cars from the browser to get started.
@@ -240,9 +254,24 @@ export function WishlistPanel() {
             No wishlist cars match the current view.
           </div>
         ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-            <SortableContext items={visible.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-              <div className="flex flex-col gap-2">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+            autoScroll={{ threshold: { x: 0, y: 0.2 } }}
+            modifiers={[viewMode === 'tile' ? restrictToParentElement : restrictToVerticalAxis]}
+          >
+            <SortableContext
+              items={visible.map((c) => c.id)}
+              strategy={viewMode === 'tile' ? rectSortingStrategy : verticalListSortingStrategy}
+            >
+              <div
+                className={
+                  viewMode === 'tile'
+                    ? 'grid grid-cols-1 gap-3 @[480px]:grid-cols-2 @[760px]:grid-cols-3'
+                    : 'flex flex-col gap-2'
+                }
+              >
                 {visible.map((car) => (
                   <WishlistRow
                     key={car.id}

@@ -64,6 +64,8 @@ interface WishlistState {
   // App chrome
   leftPanelCollapsed: boolean
   toggleLeftPanel: () => void
+  wishlistPanelExpanded: boolean
+  toggleWishlistPanel: () => void
 
   // Bulk import (from CSV)
   importWishlist: (entries: { id: string; price: number; acquired?: boolean }[]) => void
@@ -137,6 +139,9 @@ export const useStore = create<WishlistState>()(
 
       leftPanelCollapsed: false,
       toggleLeftPanel: () => set((s) => ({ leftPanelCollapsed: !s.leftPanelCollapsed })),
+      wishlistPanelExpanded: false,
+      toggleWishlistPanel: () =>
+        set((s) => ({ wishlistPanelExpanded: !s.wishlistPanelExpanded })),
 
       importWishlist: (entries) =>
         set((s) => {
@@ -155,7 +160,7 @@ export const useStore = create<WishlistState>()(
     }),
     {
       name: 'fh6-wishlist',
-      version: 7,
+      version: 8,
       // v1 -> v2 added `wishlistViewMode`. The default shallow merge fills the
       // new field from initial state, so persisted state passes through as-is
       // (existing users keep their wishlist, prices, and browser viewMode).
@@ -174,6 +179,9 @@ export const useStore = create<WishlistState>()(
       // case and returns 0, leaving the list unsorted for those users.
       // v6 -> v7 added the `rarities` filter. Backfill missing persisted values
       // to an empty array so filter code can safely read `.length`.
+      // v7 -> v8 added `wishlistPanelExpanded`. The default shallow merge fills
+      // the new field from initial state, so persisted state passes through
+      // as-is (existing users default to the collapsed wishlist panel).
       migrate: (persisted) => {
         const s = persisted as WishlistState & {
           obtained?: string[]

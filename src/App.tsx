@@ -6,6 +6,7 @@ import { useStore } from './store'
 
 export default function App() {
   const leftPanelCollapsed = useStore((s) => s.leftPanelCollapsed)
+  const wishlistPanelExpanded = useStore((s) => s.wishlistPanelExpanded)
 
   useEffect(() => {
     document.documentElement.classList.add('dark')
@@ -25,7 +26,11 @@ export default function App() {
         <CarBrowser />
       </main>
 
-      <aside className="w-96 shrink-0 border-l border-border bg-card">
+      <aside
+        className={`shrink-0 border-l border-border bg-card transition-all duration-200 ${
+          wishlistPanelExpanded ? 'w-[min(56rem,60vw)]' : 'w-96'
+        }`}
+      >
         <WishlistPanel />
       </aside>
     </div>
