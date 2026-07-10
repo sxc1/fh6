@@ -1,4 +1,5 @@
 import { useMemo, useRef } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   DndContext,
   PointerSensor,
@@ -145,17 +146,25 @@ export function WishlistPanel() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-border px-4 py-3">
-        <div className="flex items-center justify-between gap-2">
+      <div
+        className="border-b border-border px-4 py-3"
+        role="button"
+        tabIndex={0}
+        onClick={toggleExpanded}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleExpanded()
+          }
+        }}
+      >
+        <div className="flex cursor-pointer items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleExpanded}
-              title={expanded ? 'Collapse wishlist' : 'Expand wishlist'}
-              className="rounded-md border border-input bg-card px-2 py-1 text-sm hover:bg-secondary"
-            >
-              {expanded ? '»' : '«'}
-            </button>
+            {expanded ? (
+              <ChevronRight size={16} strokeWidth={2.25} />
+            ) : (
+              <ChevronLeft size={16} strokeWidth={2.25} />
+            )}
             <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
               Wishlist
             </h2>
@@ -163,14 +172,20 @@ export function WishlistPanel() {
           <div className="flex flex-wrap justify-end gap-2">
             <button
               type="button"
-              onClick={() => fileRef.current?.click()}
+              onClick={(e) => {
+                e.stopPropagation()
+                fileRef.current?.click()
+              }}
               className="rounded-md border border-input bg-card px-3 py-1.5 text-sm font-semibold hover:bg-secondary"
             >
               Import CSV
             </button>
             <button
               type="button"
-              onClick={onExport}
+              onClick={(e) => {
+                e.stopPropagation()
+                onExport()
+              }}
               disabled={wishlist.length === 0}
               className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >

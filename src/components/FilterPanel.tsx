@@ -1,4 +1,5 @@
 import { type ReactNode, useMemo } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   CAR_TYPES,
   CLASSES,
@@ -108,15 +109,13 @@ export function FilterPanel() {
 
   if (leftPanelCollapsed) {
     return (
-      <div className="flex h-full w-12 flex-col items-center gap-3 py-3">
-        <button
-          type="button"
-          onClick={toggleLeftPanel}
-          title="Show filters"
-          className="rounded-md border border-input bg-card px-2 py-1 text-sm hover:bg-secondary"
-        >
-          »
-        </button>
+      <button
+        type="button"
+        onClick={toggleLeftPanel}
+        title="Show filters"
+        className="flex h-full w-full flex-col items-center gap-3 py-3 hover:bg-secondary/40"
+      >
+        <ChevronRight size={16} strokeWidth={2.25} />
         {activeCount ? (
           <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs font-medium text-primary-foreground">
             {activeCount}
@@ -127,29 +126,36 @@ export function FilterPanel() {
         >
           Filters
         </span>
-      </div>
+      </button>
     )
   }
 
   return (
     <div className="flex h-full w-72 flex-col">
-      <div className="flex items-center justify-between px-4 py-3">
+      <div
+        className="flex cursor-pointer items-center justify-between border-b border-border px-4 py-3"
+        role="button"
+        tabIndex={0}
+        onClick={toggleLeftPanel}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleLeftPanel()
+          }
+        }}
+      >
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={toggleLeftPanel}
-            title="Hide filters"
-            className="rounded-md border border-input bg-card px-2 py-1 text-sm hover:bg-secondary"
-          >
-            «
-          </button>
+          <ChevronLeft size={16} strokeWidth={2.25} />
           <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
             Filters
           </h2>
         </div>
         <button
           type="button"
-          onClick={resetFilters}
+          onClick={(e) => {
+            e.stopPropagation()
+            resetFilters()
+          }}
           disabled={activeCount === 0}
           className="rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
         >
