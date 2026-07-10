@@ -160,7 +160,7 @@ export function WishlistPanel() {
               Wishlist
             </h2>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             <button
               type="button"
               onClick={() => fileRef.current?.click()}

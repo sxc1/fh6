@@ -90,9 +90,9 @@ export const MAKES: string[] = [...new Set(CARS.map((c) => c.make))].sort((a, b)
 )
 
 /** Sorted distinct car types (used as the "Category" filter). */
-export const CAR_TYPES: string[] = [...new Set(CARS.map((c) => c.type))].sort((a, b) =>
-  a.localeCompare(b),
-)
+export const CAR_TYPES: string[] = [...new Set(CARS.map((c) => c.type))]
+  .filter((type) => type && type !== 'Unobtainable')
+  .sort((a, b) => a.localeCompare(b))
 
 /** Sorted distinct countries of origin (empty values dropped). */
 export const COUNTRIES: string[] = [...new Set(CARS.map((c) => c.country).filter(Boolean))].sort(

@@ -18,6 +18,7 @@ interface WishlistState {
   filters: Filters
   toggleClass: (value: string) => void
   toggleCategory: (value: string) => void
+  setCategories: (values: string[]) => void
   toggleManufacturer: (value: string) => void
   toggleCountry: (value: string) => void
   toggleRarity: (value: string) => void
@@ -84,6 +85,10 @@ export const useStore = create<WishlistState>()(
       toggleCategory: (value) =>
         set((s) => ({
           filters: { ...s.filters, categories: toggleValue(s.filters.categories, value) },
+        })),
+      setCategories: (values) =>
+        set((s) => ({
+          filters: { ...s.filters, categories: values },
         })),
       toggleManufacturer: (value) =>
         set((s) => ({

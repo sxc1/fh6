@@ -17,6 +17,13 @@ interface MultiSelectProps {
   searchPlaceholder?: string
   /** Customize how each option/chip label renders. Defaults to the plain value. */
   renderOption?: (value: string) => ReactNode
+  /** Optional quick action displayed at the top of the opened menu. */
+  menuAction?: {
+    label: string
+    onClick: () => void
+    disabled?: boolean
+    title?: string
+  }
 }
 
 interface MenuPosition {
@@ -42,6 +49,7 @@ export function MultiSelect({
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
   renderOption = (value) => value,
+  menuAction,
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -208,6 +216,17 @@ export function MultiSelect({
                   placeholder={searchPlaceholder}
                   className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
+                {menuAction ? (
+                  <button
+                    type="button"
+                    onClick={menuAction.onClick}
+                    disabled={menuAction.disabled}
+                    title={menuAction.title}
+                    className="mt-2 w-full rounded-md border border-input bg-card px-2 py-1.5 text-left text-xs font-semibold text-primary hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {menuAction.label}
+                  </button>
+                ) : null}
               </div>
               <ul role="listbox" aria-multiselectable className="min-h-0 flex-1 overflow-y-auto p-1">
                 {filtered.length === 0 ? (

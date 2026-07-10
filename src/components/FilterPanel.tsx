@@ -12,6 +12,7 @@ import {
   YEAR_MIN,
 } from '../lib/cars'
 import { getClassColor } from '../lib/classColors'
+import { missingCategoriesForWishlist } from '../lib/missingCategories'
 import { useStore } from '../store'
 import { CountryFlag } from './CountryFlag'
 import { MultiSelect } from './MultiSelect'
@@ -60,6 +61,7 @@ export function FilterPanel() {
   const toggleLeftPanel = useStore((s) => s.toggleLeftPanel)
   const toggleClass = useStore((s) => s.toggleClass)
   const toggleCategory = useStore((s) => s.toggleCategory)
+  const setCategories = useStore((s) => s.setCategories)
   const toggleManufacturer = useStore((s) => s.toggleManufacturer)
   const toggleCountry = useStore((s) => s.toggleCountry)
   const toggleRarity = useStore((s) => s.toggleRarity)
@@ -71,6 +73,7 @@ export function FilterPanel() {
   const setYearRange = useStore((s) => s.setYearRange)
   const setCostRange = useStore((s) => s.setCostRange)
   const resetFilters = useStore((s) => s.resetFilters)
+  const wishlist = useStore((s) => s.wishlist)
 
   const yearFiltered = filters.yearRange[0] !== YEAR_MIN || filters.yearRange[1] !== YEAR_MAX
   const costFiltered = filters.costRange[0] !== COST_FLOOR || filters.costRange[1] !== COST_CEIL
@@ -95,6 +98,13 @@ export function FilterPanel() {
     filters.rarities.length +
     (yearFiltered ? 1 : 0) +
     (costFiltered ? 1 : 0)
+
+  const missingCategories = useMemo(
+    () => missingCategoriesForWishlist(wishlist),
+    [wishlist],
+  )
+  const hasMissingCategories = missingCategories.length > 0
+  const applyMissingCategories = () => setCategories(missingCategories)
 
   if (leftPanelCollapsed) {
     return (
@@ -191,6 +201,14 @@ export function FilterPanel() {
             onToggle={toggleCategory}
             placeholder="All categories"
             searchPlaceholder="Search categories..."
+            menuAction={{
+              label: 'Auto-select missing categories',
+              onClick: applyMissingCategories,
+              disabled: !hasMissingCategories,
+              title: hasMissingCategories
+                ? 'Select categories not yet in wishlist'
+                : 'All categories are already represented in your wishlist',
+            }}
           />
         </Section>
 

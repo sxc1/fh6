@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { CARS } from '../lib/cars'
 import { compareCars, isUnobtainable, matchesFilters, matchesSearch } from '../lib/filtering'
+import { missingCategoriesForWishlist } from '../lib/missingCategories'
 import type { SortField } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
 import { CarBrowserCard } from './CarBrowserCard'
@@ -23,6 +24,14 @@ export function CarBrowser() {
   const viewMode = useStore((s) => s.viewMode)
   const setViewMode = useStore((s) => s.setViewMode)
   const prices = useStore((s) => s.prices)
+  const wishlist = useStore((s) => s.wishlist)
+  const setCategories = useStore((s) => s.setCategories)
+
+  const missingCategories = useMemo(
+    () => missingCategoriesForWishlist(wishlist),
+    [wishlist],
+  )
+  const hasMissingCategories = missingCategories.length > 0
 
   const cars = useMemo(() => {
     const priceOf = (id: string) => effectivePrice(id, prices) ?? 0
@@ -45,6 +54,15 @@ export function CarBrowser() {
           placeholder="Search cars..."
           className="min-w-40 flex-1 rounded-md border border-input bg-card px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
+
+        <button
+          type="button"
+          onClick={() => setCategories(missingCategories)}
+          disabled={!hasMissingCategories}
+          className="rounded-md border border-input bg-card px-3 py-1.5 text-sm font-semibold text-primary hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {hasMissingCategories ? 'Filter by missing categories' : 'All categories wishlisted'}
+        </button>
 
         <div className="flex items-center gap-1">
           <select
