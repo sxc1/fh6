@@ -34,7 +34,7 @@ export function CarBrowserCard({ car, viewMode }: { car: Car; viewMode: ViewMode
         price={price}
         onClick={toggle}
         title={title}
-        className="cursor-pointer"
+        className="cursor-pointer [content-visibility:auto] [contain-intrinsic-block-size:auto_22rem]"
         overlay={inWishlist ? <AddedOverlay /> : null}
       />
     )
@@ -44,7 +44,7 @@ export function CarBrowserCard({ car, viewMode }: { car: Car; viewMode: ViewMode
     <div
       onClick={toggle}
       title={title}
-      className="relative flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-card px-3 py-2 shadow-sm"
+      className="relative flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-card px-3 py-2 shadow-sm [content-visibility:auto] [contain-intrinsic-block-size:auto_5rem]"
     >
       <ClassBadge carClass={car.carClass} rating={car.classRating} />
       <div className="min-w-0 flex-1">
