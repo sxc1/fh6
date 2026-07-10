@@ -1,18 +1,11 @@
 import { useMemo } from 'react'
+import { ChevronsDown, ChevronsUp } from 'lucide-react'
 import { CARS } from '../lib/cars'
 import { compareCars, isUnobtainable, matchesFilters, matchesSearch } from '../lib/filtering'
 import { missingCategoriesForWishlist } from '../lib/missingCategories'
-import type { SortField } from '../lib/types'
 import { effectivePrice, useStore } from '../store'
 import { CarBrowserCard } from './CarBrowserCard'
-
-const SORT_OPTIONS: { value: SortField; label: string }[] = [
-  { value: 'make', label: 'Manufacturer' },
-  { value: 'name', label: 'Name' },
-  { value: 'year', label: 'Year' },
-  { value: 'class', label: 'Class' },
-  { value: 'price', label: 'Price' },
-]
+import { SortDropdown } from './SortDropdown'
 
 export function CarBrowser() {
   const filters = useStore((s) => s.filters)
@@ -65,24 +58,18 @@ export function CarBrowser() {
         </button>
 
         <div className="flex items-center gap-1">
-          <select
+          <SortDropdown
             value={sortField}
-            onChange={(e) => setSort(e.target.value as SortField, sortDir)}
-            className="rounded-md border border-input bg-card px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                Sort: {o.label}
-              </option>
-            ))}
-          </select>
+            onChange={(nextSort) => setSort(nextSort, sortDir)}
+          />
           <button
             type="button"
             onClick={() => setSort(sortField, sortDir === 'asc' ? 'desc' : 'asc')}
-            className="rounded-md border border-input bg-card px-2 py-1.5 text-sm hover:bg-secondary"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-card text-sm hover:bg-secondary"
             title={sortDir === 'asc' ? 'Ascending' : 'Descending'}
+            aria-label={sortDir === 'asc' ? 'Sort ascending' : 'Sort descending'}
           >
-            {sortDir === 'asc' ? '↑' : '↓'}
+            {sortDir === 'asc' ? <ChevronsUp size={14} strokeWidth={2.25} /> : <ChevronsDown size={14} strokeWidth={2.25} />}
           </button>
         </div>
 
