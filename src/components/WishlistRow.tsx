@@ -11,10 +11,12 @@ export function WishlistRow({
   car,
   index,
   viewMode,
+  highlighted = false,
 }: {
   car: Car
   index: number
   viewMode: ViewMode
+  highlighted?: boolean
 }) {
   const price = useStore((s) => effectivePrice(car.id, s.prices))
   const acquired = useStore((s) => s.acquired.includes(car.id))
@@ -54,8 +56,11 @@ export function WishlistRow({
     return (
       <div
         ref={setNodeRef}
+        data-wishlist-car-id={car.id}
         {...dragProps}
-        className="relative flex cursor-grab touch-none items-start gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing"
+        className={`relative flex cursor-grab touch-none items-start gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm active:cursor-grabbing ${
+          highlighted ? 'wishlist-added-highlight' : ''
+        }`}
       >
         <span className="w-6 shrink-0 text-center text-xs font-semibold text-muted-foreground tabular-nums">
           {index + 1}
@@ -94,10 +99,13 @@ export function WishlistRow({
   return (
     <CarTilePresentational
       ref={setNodeRef}
+      data-wishlist-car-id={car.id}
       car={car}
       price={price}
       {...dragProps}
-      className="cursor-grab touch-none active:cursor-grabbing"
+      className={`cursor-grab touch-none active:cursor-grabbing ${
+        highlighted ? 'wishlist-added-highlight' : ''
+      }`}
       imageTopLeft={
         <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-background/80 px-1.5 text-xs font-bold tabular-nums text-foreground shadow-sm">
           {index + 1}

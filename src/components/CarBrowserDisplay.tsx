@@ -4,7 +4,11 @@ import { compareCars, isUnobtainable, matchesFilters, matchesSearch } from '../l
 import { effectivePrice, useStore } from '../store'
 import { CarBrowserCard } from './CarBrowserCard'
 
-export const CarBrowserDisplay = memo(function CarBrowserDisplay() {
+export const CarBrowserDisplay = memo(function CarBrowserDisplay({
+  onAddCar,
+}: {
+  onAddCar: (id: string) => void
+}) {
   const filters = useStore((s) => s.filters)
   const search = useStore((s) => s.search)
   const sortField = useStore((s) => s.sortField)
@@ -40,13 +44,13 @@ export const CarBrowserDisplay = memo(function CarBrowserDisplay() {
           // Intentionally capped lower so tiles stay readable and less condensed.
           <div className="grid grid-cols-1 gap-5 @[560px]:grid-cols-2 @[920px]:grid-cols-3 @[1320px]:grid-cols-4">
             {cars.map((car) => (
-              <CarBrowserCard key={car.id} car={car} viewMode="tile" />
+              <CarBrowserCard key={car.id} car={car} viewMode="tile" onAddCar={onAddCar} />
             ))}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             {cars.map((car) => (
-              <CarBrowserCard key={car.id} car={car} viewMode="list" />
+              <CarBrowserCard key={car.id} car={car} viewMode="list" onAddCar={onAddCar} />
             ))}
           </div>
         )}

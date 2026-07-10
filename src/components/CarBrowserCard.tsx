@@ -9,9 +9,8 @@ import { RarityDisplay } from './RarityDisplay'
 function useCarBindings(car: Car) {
   const inWishlist = useStore((s) => s.wishlist.includes(car.id))
   const price = useStore((s) => effectivePrice(car.id, s.prices))
-  const addToWishlist = useStore((s) => s.addToWishlist)
   const removeFromWishlist = useStore((s) => s.removeFromWishlist)
-  return { inWishlist, price, addToWishlist, removeFromWishlist }
+  return { inWishlist, price, removeFromWishlist }
 }
 
 function AddedOverlay() {
@@ -22,9 +21,17 @@ function AddedOverlay() {
   )
 }
 
-export function CarBrowserCard({ car, viewMode }: { car: Car; viewMode: ViewMode }) {
-  const { inWishlist, price, addToWishlist, removeFromWishlist } = useCarBindings(car)
-  const toggle = () => (inWishlist ? removeFromWishlist(car.id) : addToWishlist(car.id))
+export function CarBrowserCard({
+  car,
+  viewMode,
+  onAddCar,
+}: {
+  car: Car
+  viewMode: ViewMode
+  onAddCar: (id: string) => void
+}) {
+  const { inWishlist, price, removeFromWishlist } = useCarBindings(car)
+  const toggle = () => (inWishlist ? removeFromWishlist(car.id) : onAddCar(car.id))
   const title = inWishlist ? 'Click to remove from wishlist' : 'Click to add to wishlist'
 
   if (viewMode === 'tile') {

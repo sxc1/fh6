@@ -1,15 +1,24 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { CarBrowser } from './components/CarBrowser'
 import { FilterPanel } from './components/FilterPanel'
-import { WishlistPanel } from './components/WishlistPanel'
+import { WishlistPanel, type WishlistPanelHandle } from './components/WishlistPanel'
 import { useStore } from './store'
 
 export default function App() {
   const leftPanelCollapsed = useStore((s) => s.leftPanelCollapsed)
   const wishlistPanelExpanded = useStore((s) => s.wishlistPanelExpanded)
+  const wishlistPanelRef = useRef<WishlistPanelHandle>(null)
 
   useEffect(() => {
     document.documentElement.classList.add('dark')
+  }, [])
+
+  const onAddCar = useCallback((id: string) => {
+    const anchorId = wishlistPanelRef.current?.getViewportCenterAnchorId()
+    const { wishlist, insertIntoWishlist } = useStore.getState()
+    const anchorIndex = anchorId ? wishlist.indexOf(anchorId) : -1
+    insertIntoWishlist(id, anchorIndex === -1 ? wishlist.length : anchorIndex)
+    wishlistPanelRef.current?.revealAddedCar(id)
   }, [])
 
   return (
@@ -23,7 +32,7 @@ export default function App() {
       </aside>
 
       <main className="min-w-0 flex-1">
-        <CarBrowser />
+        <CarBrowser onAddCar={onAddCar} />
       </main>
 
       <aside
@@ -31,7 +40,7 @@ export default function App() {
           wishlistPanelExpanded ? 'w-[min(56rem,60vw)]' : 'w-96'
         }`}
       >
-        <WishlistPanel />
+        <WishlistPanel ref={wishlistPanelRef} />
       </aside>
     </div>
   )

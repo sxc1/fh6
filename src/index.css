@@ -39,3 +39,24 @@
     cursor: pointer;
   }
 }
+
+@keyframes wishlist-added-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 3px var(--primary);
+  }
+}
+
+.wishlist-added-highlight {
+  animation: wishlist-added-flash 420ms ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-added-highlight {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--primary);
+  }
+}

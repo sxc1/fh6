@@ -43,6 +43,7 @@ interface WishlistState {
   // Wishlist (strictly ordered by array position)
   wishlist: string[]
   addToWishlist: (id: string) => void
+  insertIntoWishlist: (id: string, index: number) => void
   removeFromWishlist: (id: string) => void
   setWishlistOrder: (ids: string[]) => void
   clearWishlist: () => void
@@ -122,6 +123,14 @@ export const useStore = create<WishlistState>()(
       wishlist: [],
       addToWishlist: (id) =>
         set((s) => (s.wishlist.includes(id) ? s : { wishlist: [...s.wishlist, id] })),
+      insertIntoWishlist: (id, index) =>
+        set((s) => {
+          if (s.wishlist.includes(id)) return s
+          const insertAt = Math.max(0, Math.min(index, s.wishlist.length))
+          const wishlist = [...s.wishlist]
+          wishlist.splice(insertAt, 0, id)
+          return { wishlist }
+        }),
       removeFromWishlist: (id) =>
         set((s) => ({ wishlist: s.wishlist.filter((w) => w !== id) })),
       setWishlistOrder: (ids) => set({ wishlist: ids }),

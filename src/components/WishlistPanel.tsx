@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -35,6 +35,11 @@ import { WishlistRow } from './WishlistRow'
 
 type ToggleIcon = 'filter' | 'eye'
 
+export interface WishlistPanelHandle {
+  getViewportCenterAnchorId: () => string | null
+  revealAddedCar: (id: string) => void
+}
+
 function Toggle({
   label,
   checked,
@@ -65,7 +70,7 @@ function Toggle({
   )
 }
 
-export function WishlistPanel() {
+export const WishlistPanel = forwardRef<WishlistPanelHandle>(function WishlistPanel(_, ref) {
   const wishlist = useStore((s) => s.wishlist)
   const prices = useStore((s) => s.prices)
   const acquired = useStore((s) => s.acquired)
@@ -82,8 +87,65 @@ export function WishlistPanel() {
   const expanded = useStore((s) => s.wishlistPanelExpanded)
   const toggleExpanded = useStore((s) => s.toggleWishlistPanel)
   const [showExpandedLabels, setShowExpandedLabels] = useState(expanded)
+  const [recentlyAddedId, setRecentlyAddedId] = useState<string | null>(null)
 
   const fileRef = useRef<HTMLInputElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const highlightTimeoutRef = useRef<number | null>(null)
+
+  useEffect(
+    () => () => {
+      if (highlightTimeoutRef.current !== null) window.clearTimeout(highlightTimeoutRef.current)
+    },
+    [],
+  )
+
+  useImperativeHandle(ref, () => ({
+    getViewportCenterAnchorId: () => {
+      const viewport = scrollRef.current
+      if (!viewport) return null
+      const viewportRect = viewport.getBoundingClientRect()
+      const viewportCenterX = viewportRect.left + viewportRect.width / 2
+      const viewportCenterY = viewportRect.top + viewportRect.height / 2
+      const candidates = Array.from(
+        viewport.querySelectorAll<HTMLElement>('[data-wishlist-car-id]'),
+      )
+        .map((element) => ({ id: element.dataset.wishlistCarId, rect: element.getBoundingClientRect() }))
+        .filter(
+          (candidate): candidate is { id: string; rect: DOMRect } =>
+            Boolean(candidate.id) &&
+            candidate.rect.bottom > viewportRect.top &&
+            candidate.rect.top < viewportRect.bottom,
+        )
+
+      if (candidates.length === 0) return null
+      return candidates.reduce((closest, candidate) => {
+        const distance = Math.hypot(
+          candidate.rect.left + candidate.rect.width / 2 - viewportCenterX,
+          candidate.rect.top + candidate.rect.height / 2 - viewportCenterY,
+        )
+        const closestDistance = Math.hypot(
+          closest.rect.left + closest.rect.width / 2 - viewportCenterX,
+          closest.rect.top + closest.rect.height / 2 - viewportCenterY,
+        )
+        return distance < closestDistance ? candidate : closest
+      }).id
+    },
+    revealAddedCar: (id) => {
+      requestAnimationFrame(() => {
+        const element = scrollRef.current?.querySelector<HTMLElement>(
+          `[data-wishlist-car-id="${CSS.escape(id)}"]`,
+        )
+        element?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+        setRecentlyAddedId(id)
+        if (highlightTimeoutRef.current !== null) window.clearTimeout(highlightTimeoutRef.current)
+        highlightTimeoutRef.current = window.setTimeout(() => {
+          setRecentlyAddedId((current) => (current === id ? null : current))
+          highlightTimeoutRef.current = null
+        }, 1400)
+      })
+    },
+  }))
 
   useEffect(() => {
     if (!expanded) {
@@ -300,7 +362,10 @@ export function WishlistPanel() {
         />
       </div>
 
-      <div className="@container min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-3">
+      <div
+        ref={scrollRef}
+        className="@container min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-3"
+      >
         {wishlist.length === 0 ? (
           <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
             Your wishlist is empty. Add cars from the browser to get started.
@@ -334,6 +399,7 @@ export function WishlistPanel() {
                     car={car}
                     index={wishlist.indexOf(car.id)}
                     viewMode={viewMode}
+                    highlighted={car.id === recentlyAddedId}
                   />
                 ))}
               </div>
@@ -364,4 +430,4 @@ export function WishlistPanel() {
       </div>
     </div>
   )
-}
+})
