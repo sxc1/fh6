@@ -12,11 +12,13 @@ export function WishlistRow({
   index,
   viewMode,
   highlighted = false,
+  abbreviatedRarity = false,
 }: {
   car: Car
   index: number
   viewMode: ViewMode
   highlighted?: boolean
+  abbreviatedRarity?: boolean
 }) {
   const price = useStore((s) => effectivePrice(car.id, s.prices))
   const acquired = useStore((s) => s.acquired.includes(car.id))
@@ -102,6 +104,7 @@ export function WishlistRow({
       data-wishlist-car-id={car.id}
       car={car}
       price={price}
+      abbreviatedRarity={abbreviatedRarity}
       {...dragProps}
       className={`cursor-grab touch-none active:cursor-grabbing ${
         highlighted ? 'wishlist-added-highlight' : ''

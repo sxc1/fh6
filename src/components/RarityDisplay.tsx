@@ -11,12 +11,24 @@ const RARITY_STYLES: Record<string, string> = {
   Unknown: 'bg-muted text-muted-foreground',
 }
 
-export function RarityDisplay({ rarity }: { rarity: string }) {
+export function RarityDisplay({
+  rarity,
+  abbreviated = false,
+}: {
+  rarity: string
+  abbreviated?: boolean
+}) {
   const normalized = rarity.trim() || 'Unknown'
   const style = RARITY_STYLES[normalized] ?? RARITY_STYLES.Unknown
+  const label = abbreviated
+    ? normalized
+        .split(/\s+/)
+        .map((word) => word[0])
+        .join('')
+    : normalized
   return (
     <PillBadge className={`font-bold uppercase ${style}`} title={`Rarity: ${normalized}`}>
-      {normalized}
+      {label}
     </PillBadge>
   )
 }

@@ -16,6 +16,7 @@ interface CarTilePresentationalProps extends DivProps {
   imageTopRight?: ReactNode
   overlay?: ReactNode
   imageDraggable?: boolean
+  abbreviatedRarity?: boolean
 }
 
 export const CarTilePresentational = forwardRef<HTMLDivElement, CarTilePresentationalProps>(
@@ -27,6 +28,7 @@ export const CarTilePresentational = forwardRef<HTMLDivElement, CarTilePresentat
       imageTopRight,
       overlay,
       imageDraggable = false,
+      abbreviatedRarity = false,
       className = '',
       ...divProps
     },
@@ -74,7 +76,7 @@ export const CarTilePresentational = forwardRef<HTMLDivElement, CarTilePresentat
           </div>
           <div className="mt-auto flex items-center justify-between gap-2 pt-1">
             <div className="flex flex-wrap items-center gap-1.5">
-              <RarityDisplay rarity={car.rarity} />
+              <RarityDisplay rarity={car.rarity} abbreviated={abbreviatedRarity} />
               <CarTypeBadge type={car.type} />
             </div>
             <PriceDisplay value={price} />

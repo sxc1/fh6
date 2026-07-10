@@ -400,6 +400,7 @@ export const WishlistPanel = forwardRef<WishlistPanelHandle>(function WishlistPa
                     index={wishlist.indexOf(car.id)}
                     viewMode={viewMode}
                     highlighted={car.id === recentlyAddedId}
+                    abbreviatedRarity={expanded}
                   />
                 ))}
               </div>
